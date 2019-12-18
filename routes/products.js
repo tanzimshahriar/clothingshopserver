@@ -6,4 +6,7 @@ const passportJWT = passport.authenticate('jwt',{ session: false });
 productRouter.route('/addproduct')
 .post(passportJWT, productsController.addProduct);
 
+productRouter.route('/getproducts')
+.get(productsController.getProducts);
+
 module.exports = productRouter;

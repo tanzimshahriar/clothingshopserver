@@ -8,18 +8,23 @@ const userSchema = new Schema({
         required: true
     },
     price: {
-        type: mongoose.Types.Decimal128,
+        type: Number,
         required: true
     },
     sale: {
-        type: mongoose.Types.Decimal128,
+        type: Number,
+        default: 0
     },
     description: {
         type: String,
         required: true
     },
     quantity: [],    
-    images: []
+    images: [],
+    orders: {
+        type: Number,
+        default: 0
+    }
 });
 
 //create model
