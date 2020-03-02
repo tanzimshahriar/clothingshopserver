@@ -1,25 +1,67 @@
 const Product = require('../models/product');
 var upload = require('../helpers/imageUpload');
+const fs = require('fs');
 
 module.exports = {
-    addProduct: async (req, res, next) => {
+    addProductMultipleImages: async (req, res, next) => {
         req.user.local.admin ? null : res.status(401).send('Unauthorized');
-        upload(req,res,function(err) {
+        upload.array('images')(req,res,function(err) {
             if(err){
                 return res.status(400).json(err);
             }
-            const file = req.file;
-            
-            var b = []
-            console.log(req.image)
-            b.push(file);
+            const files = req.files;
+            var images = [];
+            //convert files to images
+            for(var i = 0; i < files.length; i++) {
+                var img = fs.readFileSync(files[i].path);
+                var encode_img = img.toString('base64');
+                //new JSON object for the image
+                var finalImg = {
+                    contentType: files[i].mimetype,
+                    path: files[i].path,
+                    image: new Buffer(encode_img, 'base64')
+                };
+                images.push(finalImg);
+            }
+
             const newProduct = new Product({
                 name: req.body.name,
                 price: req.body.price,
                 sale: req.body.sale,
                 description: req.body.description,
                 quantity: {},
-                images: b
+                images: images
+            })
+
+            newProduct.save(async function (err, ) {
+                if (err) {
+                    res.status(400).json({
+                        err
+                    })
+                }
+                else {
+                    res.status(200).json({
+                        result: "success"
+                    })
+                }
+            });
+        });
+    },
+    addProductSingleImage: async (req, res, next) => {
+        req.user.local.admin ? null : res.status(401).send('Unauthorized');
+        upload.single('images')(req,res,function(err) {
+            if(err){
+                return res.status(400).json(err);
+            }
+            var imagesArray = [];
+            imagesArray.push(req.file);
+            const newProduct = new Product({
+                name: req.body.name,
+                price: req.body.price,
+                sale: req.body.sale,
+                description: req.body.description,
+                quantity: {},
+                images: imagesArray
             })
 
             newProduct.save(async function (err, ) {
@@ -67,5 +109,8 @@ module.exports = {
                 error
             });
         }
+    },
+    getImage: async (req, res, next) => {
+        res.json("getImage api");
     }
 }
