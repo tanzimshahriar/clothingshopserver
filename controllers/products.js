@@ -1,35 +1,40 @@
 const Product = require('../models/product');
-const imageUpload = require('../helpers/imageUpload');
+var upload = require('../helpers/imageUpload');
 
 module.exports = {
     addProduct: async (req, res, next) => {
         req.user.local.admin ? null : res.status(401).send('Unauthorized');
-        const {
-            name,
-            price,
-            sale,
-            description,
-            quantity,
-            images
-        } = req.body;
-        const newProduct = new Product({
-            name,
-            price,
-            sale,
-            description,
-            quantity,
-            images
-        })
-        newProduct.save(async function (err, ) {
-            if (err) {
-                return console.log(err);
+        upload(req,res,function(err) {
+            if(err){
+                return res.status(400).json(err);
             }
-        });
-        console.log(req);
-        res.status(200).json({
-            result: "success"
-        })
+            const file = req.file;
+            
+            var b = []
+            console.log(req.image)
+            b.push(file);
+            const newProduct = new Product({
+                name: req.body.name,
+                price: req.body.price,
+                sale: req.body.sale,
+                description: req.body.description,
+                quantity: {},
+                images: b
+            })
 
+            newProduct.save(async function (err, ) {
+                if (err) {
+                    res.status(400).json({
+                        err
+                    })
+                }
+                else {
+                    res.status(200).json({
+                        result: "success"
+                    })
+                }
+            });
+        });
     },
     getProducts: async (req, res, next) => {
         const products = await Product.find();
@@ -41,8 +46,8 @@ module.exports = {
     },
     deleteProduct: async (req, res, next) => {
         //check if the user is admin
-        const admin =  req.user.local.admin? true : false;
-        !admin? res.status(403).json("unauthorized") : null;
+        const admin = req.user.local.admin ? true : false;
+        !admin ? res.status(403).json("unauthorized") : null;
         console.log(req.body)
         try {
             //find product and delete
@@ -54,7 +59,7 @@ module.exports = {
             res.status(200).json({
                 result: "success"
             })
-               
+
 
         } catch (error) {
             console.log(error)
