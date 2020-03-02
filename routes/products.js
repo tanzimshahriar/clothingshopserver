@@ -9,4 +9,7 @@ productRouter.route('/addproduct')
 productRouter.route('/getproducts')
 .get(productsController.getProducts);
 
+productRouter.route("/deleteproduct")
+.post(passportJWT, productsController.deleteProduct)
+
 module.exports = productRouter;
