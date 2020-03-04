@@ -15,7 +15,5 @@ productRouter.route('/getproducts')
 productRouter.route("/deleteproduct")
 .post(passportJWT, productsController.deleteProduct)
 
-productRouter.route("/getproductimage")
-.get(productsController.getImage)
 
 module.exports = productRouter;
