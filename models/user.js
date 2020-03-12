@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Schema = mongoose.Schema;
+const Order = require('../models/order');
 
 //create schema
 const userSchema = new Schema({
@@ -38,7 +39,8 @@ const userSchema = new Schema({
             type: String,
             lowercase: true
         }
-    }
+    },
+    orders: []
 });
 
 userSchema.pre('save', async function(next) {

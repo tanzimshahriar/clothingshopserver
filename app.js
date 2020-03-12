@@ -20,7 +20,7 @@ const cors = require('cors');
 
 //middlewares
 app.use(morgan('dev'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(express.urlencoded({
   extended: false
 }));

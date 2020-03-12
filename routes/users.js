@@ -25,4 +25,13 @@ userRouter.route('/oauth/facebook')
 userRouter.route('/checkuseradmin')
 .post(passportJWT, UsersController.checkUserAdmin);
 
+userRouter.route('/getorders')
+.get(passportJWT, UsersController.getOrders);
+
+userRouter.route('/order')
+.post(UsersController.order);
+
+userRouter.route('/orderloggedin')
+.post(passportJWT, UsersController.orderLoggedIn);
+
 module.exports = userRouter;
