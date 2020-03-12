@@ -163,7 +163,7 @@ module.exports = {
             }
         });
 
-        var orders = req.user.orders && (req.user.orders).length && (req.user.orders).length>1? req.user.orders.push(newOrder._id) : [newOrder._id];
+        var orders = req.user.orders && (req.user.orders).length && (req.user.orders).length>0? req.user.orders.concat([newOrder._id]) : [newOrder._id];
         await User.findByIdAndUpdate(req.user._id, {orders}, function(err){
             if(err){
                 return res.status(400).json({
@@ -180,6 +180,22 @@ module.exports = {
         })
     },
     getOrders: async (req,res, next) => {
-        res.status(200).json("return orders here");
+        var allorders = [];
+        var orders = await User.findById(req.user._id, function(error){
+            if(error){
+                return res.status(500).json(error);
+            }
+        })
+        .select("orders")
+        for(var i = 0; i < orders.orders.length; i++){
+            var order = await Order.findById(orders.orders[i], function(err){
+                if(err){
+                    console.log(err);
+                    return res.status(500).json(err);
+                }
+            });
+            allorders.push(order);
+        }
+        res.status(200).json(allorders);
     }
 }
