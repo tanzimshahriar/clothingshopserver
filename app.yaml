@@ -1,0 +1,5 @@
+runtime: nodejs10
+env_variables:
+  INSTANCE_CONNECTION_NAME: server-261022:us-central1:tanzim
+beta_settings:
+  cloud_sql_instances: server-261022:us-central1:tanzim

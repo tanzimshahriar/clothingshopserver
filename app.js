@@ -26,7 +26,7 @@ app.use(express.urlencoded({
 }));
 if (process.env.NODE_ENV == "production") {
   const allowedCorsSites = {
-    origin: "https://assignment-two-app.appspot.com"
+    origin: "https://client-261022.appspot.com"
   }
   app.use(cors(allowedCorsSites));
 } else {
