@@ -130,12 +130,26 @@ module.exports = {
         });
     },
 
+    //returns all products, if a code parameter is passed in then it will return that product
     getProducts: async (req, res, next) => {
-        const products = await Product.find();
-        if (products) {
-            return res.status(200).json({
-                products
-            });
+        if(req.query.code && req.query.code != ''){
+            const product = await Product.findOne({ 'code' : req.query.code });
+            if(product){
+                return res.status(200).json({
+                    product
+                });
+            } else {
+                return res.status(400).json("item doesn't exist")
+            }
+        } else {
+            const products = await Product.find();
+            if (products) {
+                return res.status(200).json({
+                    products
+                });
+            } else {
+                return res.status(400)
+            }
         }
     },
     deleteProduct: async (req, res, next) => {
