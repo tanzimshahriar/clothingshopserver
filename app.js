@@ -16,23 +16,21 @@ mongoose.connect(process.env.MONGODB_URL)
 
 const app = express();
 const cors = require('cors');
-
-
-//middlewares
-app.use(morgan('dev'));
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(express.urlencoded({
-  extended: false
-}));
 if (process.env.NODE_ENV == "production") {
   const allowedCorsSites = {
-    origin: "https://client-261022.appspot.com"
+    origin: "https://thawing-atoll-10106.herokuapp.com"
   }
   app.use(cors(allowedCorsSites));
 } else {
   app.use(cors())
 }
 
+//middlewares
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(express.urlencoded({
+  extended: false
+}));
 
 //routes
 const userRoutes = require('./routes/users');
