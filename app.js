@@ -16,7 +16,14 @@ mongoose.connect(process.env.MONGODB_URL)
 
 const app = express();
 const cors = require('cors');
-
+if (process.env.NODE_ENV == "production") {
+  const allowedCorsSites = {
+    origin: "https://thawing-atoll-10106.herokuapp.com"
+  }
+  app.use(cors(allowedCorsSites));
+} else {
+  app.use(cors())
+}
 
 //middlewares
 app.use(morgan('dev'));
@@ -24,15 +31,6 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({
   extended: false
 }));
-if (process.env.NODE_ENV == "production") {
-  const allowedCorsSites = {
-    origin: "https://assignment-two-app.appspot.com"
-  }
-  app.use(cors(allowedCorsSites));
-} else {
-  app.use(cors())
-}
-
 
 //routes
 const userRoutes = require('./routes/users');
