@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Binary } = require('mongodb');
 const Schema = mongoose.Schema;
 
 //create schema
@@ -23,12 +24,15 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
-    quantity: [],    
-    images: [],
-    orders: {
-        type: Number,
-        default: 0
-    }
+    sizeAndQuantityAvailable: [{ size: { type: String }, quantityAvailable: { type: Number }}],
+    //quantity removed, images[] changed orders changed from object to array   
+    images: [{ src: { type: String }, color: { type: String} }],
+    gender: {
+        male: { type: Boolean },
+        female: { type: Boolean }
+    },
+    orders: [],
+    categories: []
 });
 
 //create model

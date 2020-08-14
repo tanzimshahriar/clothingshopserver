@@ -1,7 +1,7 @@
 const JWT = require('jsonwebtoken');
 const User = require('../models/user');
 const Order = require('../models/order');
-const Product = require('../models/product');
+const Product = require('../models/product/product');
 
 signToken = user => {
     return token = JWT.sign({
