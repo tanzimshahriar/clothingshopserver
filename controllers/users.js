@@ -92,7 +92,7 @@ module.exports = {
         } = req.body;
         for (var i = 0; i < items.length; i++) {
             var product = await Product.findOne({
-                "code": items[i].code
+                "code": items[i]._id
             });
             if (!product && !product.name) {
                 //send an error message to client that product isnt available or quantity is too many
@@ -133,7 +133,7 @@ module.exports = {
         } = req.body;
         for (var i = 0; i < items.length; i++) {
             var product = await Product.findOne({
-                "code": items[i].code
+                "code": items[i]._id
             });
             if (!product && !product.name) {
                 //send an error message to client that product isnt available or quantity is too many
