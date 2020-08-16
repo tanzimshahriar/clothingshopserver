@@ -23,12 +23,15 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
-    quantity: [],    
+    sizeAndQuantityAvailable: [{ size: { type: String }, quantityAvailable: { type: Number }}],
+    //quantity removed, images[] changed orders changed from object to array   
     images: [],
-    orders: {
-        type: Number,
-        default: 0
-    }
+    gender: {
+        male: { type: Boolean },
+        female: { type: Boolean }
+    },
+    orders: [],
+    categories: []
 });
 
 //create model
