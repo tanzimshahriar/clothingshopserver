@@ -155,11 +155,51 @@ module.exports = {
     getProducts: async (req, res, next) => {
         const page = req.query.page;
         const max = req.query.max ? req.query.max : 20;
-        const onsale = req.query.onsale && req.query.onsale == "true" ? true : false;
 
         //find the number of products so that noOfPages can be returned
         const count = await Product.collection.countDocuments();
-        var noOfPages = Math.ceil(count/max) ;
+        var noOfPages = Math.ceil(count / max);
+
+        //set the query dynamically
+        var searchQuery = {};
+        var sort = {}
+
+        //sale added to query
+        req.query.onsale && req.query.onsale == "true" ? searchQuery["sale"] = { $gt: 0 } : null;
+
+        //price added to query
+        var pricegt = req.query.pricegt && !isNaN(req.query.pricegt) ? parseInt(req.query.pricegt) : null;
+        var pricelt = req.query.pricelt && !isNaN(req.query.pricelt) ? parseInt(req.query.pricelt) : null;
+        pricelt && pricegt ? searchQuery["price"] = { $gt: pricegt, $lt: pricelt } : null;
+
+        //gender added to query
+        var male = req.query.male && req.query.male=="true"? true : false;
+        var female = req.query.female && req.query.female=="true"? true : false;
+        male && female ? (searchQuery["gender"] = { male: true, female: true }) : male ? (searchQuery["gender"] = { male: true, female: false }) : female ? (searchQuery["gender"] = { male: false, female: true }) : null;
+
+        //categories added to query
+        console.log(req.query.categories)
+        var categories = req.query.categories? JSON.parse(req.query.categories) : null;
+        categories && categories.length > 0 ? searchQuery["categories"] = categories : null;
+
+        //sizes add to query
+        var sizes = req.query.sizes? JSON.parse(req.query.sizes) : [];
+        sizes && sizes.length > 0 ? searchQuery["sizeAndQuantityAvailable"] = [{ size: sizes }] : null
+
+        //sorting added
+        if(req.query.sort){
+            if(req.query.sort == "priceasc"){
+                sort["price"] = 1;
+            } else if (req.query.sort == "pricedesc"){
+                sort["price"] = -1;
+            } else if (req.query.sort == "nameasc"){
+                sort["name"] = 1;
+            } else if(req.query.sort == "namedesc"){
+                sort["name"] = -1;
+            }
+        }
+
+        console.log(searchQuery);
 
         //if query _id is sent to find a specific item
         if (req.query.id && req.query.id != '') {
@@ -184,13 +224,11 @@ module.exports = {
                 // .exec(function(err, posts) {
                 //     // `posts` will be of length 20
                 // });
-                
-                const products = await Product.find({
-                    ...onsale ? { sale: { $gt: 0 } } : {},
-                }).limit(10);
+
+                const products = await Product.find(searchQuery).limit(10).sort(sort);
                 if (products) {
                     return res.status(200).json({
-                        products , noOfPages
+                        products, noOfPages
                     });
                 } else {
                     return res.status(400)
@@ -200,12 +238,12 @@ module.exports = {
                 //if its not first page then skip required no of items
                 var skip = (page - 1) * max
 
-                const products = await Product.find({
-                    ...onsale ? { sale: { $gt: 0 } } : {},
-                }).skip(skip).limit(10);
+                const products = await Product.find(
+                   searchQuery
+                ).skip(skip).limit(10).sort(sort);
                 if (products) {
                     return res.status(200).json({
-                        products , noOfPages
+                        products, noOfPages
                     });
                 } else {
                     return res.status(400)
